@@ -1,0 +1,73 @@
+-- Table: public.restaurant_order_course
+
+-- DROP TABLE public.restaurant_order_course;
+
+CREATE TABLE public.restaurant_order_course
+(
+    id integer NOT NULL DEFAULT nextval('restaurant_order_course_id_seq'::regclass),
+    index integer,
+    order_id integer NOT NULL,
+    create_uid integer,
+    write_uid integer,
+    uuid character varying COLLATE pg_catalog."default",
+    fired boolean,
+    fired_date timestamp without time zone,
+    create_date timestamp without time zone,
+    write_date timestamp without time zone,
+    CONSTRAINT restaurant_order_course_pkey PRIMARY KEY (id),
+    CONSTRAINT restaurant_order_course_create_uid_fkey FOREIGN KEY (create_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT restaurant_order_course_order_id_fkey FOREIGN KEY (order_id)
+        REFERENCES public.pos_order (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT restaurant_order_course_write_uid_fkey FOREIGN KEY (write_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.restaurant_order_course
+    OWNER to lidiaadmin;
+
+COMMENT ON TABLE public.restaurant_order_course
+    IS 'POS Restaurant Order Course';
+
+COMMENT ON COLUMN public.restaurant_order_course.index
+    IS 'Course index';
+
+COMMENT ON COLUMN public.restaurant_order_course.order_id
+    IS 'Order Ref';
+
+COMMENT ON COLUMN public.restaurant_order_course.create_uid
+    IS 'Created by';
+
+COMMENT ON COLUMN public.restaurant_order_course.write_uid
+    IS 'Last Updated by';
+
+COMMENT ON COLUMN public.restaurant_order_course.uuid
+    IS 'Uuid';
+
+COMMENT ON COLUMN public.restaurant_order_course.fired
+    IS 'Fired';
+
+COMMENT ON COLUMN public.restaurant_order_course.fired_date
+    IS 'Fired Date';
+
+COMMENT ON COLUMN public.restaurant_order_course.create_date
+    IS 'Created on';
+
+COMMENT ON COLUMN public.restaurant_order_course.write_date
+    IS 'Last Updated on';
+-- Index: restaurant_order_course__order_id_index
+
+-- DROP INDEX public.restaurant_order_course__order_id_index;
+
+CREATE INDEX restaurant_order_course__order_id_index
+    ON public.restaurant_order_course USING btree
+    (order_id ASC NULLS LAST)
+    TABLESPACE pg_default;
