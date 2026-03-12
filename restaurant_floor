@@ -1,0 +1,57 @@
+-- Table: public.restaurant_floor
+
+-- DROP TABLE public.restaurant_floor;
+
+CREATE TABLE public.restaurant_floor
+(
+    id integer NOT NULL DEFAULT nextval('restaurant_floor_id_seq'::regclass),
+    sequence integer,
+    create_uid integer,
+    write_uid integer,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    background_color character varying COLLATE pg_catalog."default",
+    active boolean,
+    create_date timestamp without time zone,
+    write_date timestamp without time zone,
+    CONSTRAINT restaurant_floor_pkey PRIMARY KEY (id),
+    CONSTRAINT restaurant_floor_create_uid_fkey FOREIGN KEY (create_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT restaurant_floor_write_uid_fkey FOREIGN KEY (write_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.restaurant_floor
+    OWNER to lidiaadmin;
+
+COMMENT ON TABLE public.restaurant_floor
+    IS 'Restaurant Floor';
+
+COMMENT ON COLUMN public.restaurant_floor.sequence
+    IS 'Sequence';
+
+COMMENT ON COLUMN public.restaurant_floor.create_uid
+    IS 'Created by';
+
+COMMENT ON COLUMN public.restaurant_floor.write_uid
+    IS 'Last Updated by';
+
+COMMENT ON COLUMN public.restaurant_floor.name
+    IS 'Floor Name';
+
+COMMENT ON COLUMN public.restaurant_floor.background_color
+    IS 'Background Color';
+
+COMMENT ON COLUMN public.restaurant_floor.active
+    IS 'Active';
+
+COMMENT ON COLUMN public.restaurant_floor.create_date
+    IS 'Created on';
+
+COMMENT ON COLUMN public.restaurant_floor.write_date
+    IS 'Last Updated on';
