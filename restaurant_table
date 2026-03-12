@@ -1,0 +1,106 @@
+-- Table: public.restaurant_table
+
+-- DROP TABLE public.restaurant_table;
+
+CREATE TABLE public.restaurant_table
+(
+    id integer NOT NULL DEFAULT nextval('restaurant_table_id_seq'::regclass),
+    floor_id integer,
+    table_number integer NOT NULL,
+    seats integer,
+    parent_id integer,
+    create_uid integer,
+    write_uid integer,
+    shape character varying COLLATE pg_catalog."default" NOT NULL,
+    color character varying COLLATE pg_catalog."default",
+    active boolean,
+    create_date timestamp without time zone,
+    write_date timestamp without time zone,
+    position_h double precision,
+    position_v double precision,
+    width double precision,
+    height double precision,
+    identifier character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT restaurant_table_pkey PRIMARY KEY (id),
+    CONSTRAINT restaurant_table_create_uid_fkey FOREIGN KEY (create_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT restaurant_table_floor_id_fkey FOREIGN KEY (floor_id)
+        REFERENCES public.restaurant_floor (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT restaurant_table_parent_id_fkey FOREIGN KEY (parent_id)
+        REFERENCES public.restaurant_table (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT restaurant_table_write_uid_fkey FOREIGN KEY (write_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.restaurant_table
+    OWNER to lidiaadmin;
+
+COMMENT ON TABLE public.restaurant_table
+    IS 'Restaurant Table';
+
+COMMENT ON COLUMN public.restaurant_table.floor_id
+    IS 'Floor';
+
+COMMENT ON COLUMN public.restaurant_table.table_number
+    IS 'Table Number';
+
+COMMENT ON COLUMN public.restaurant_table.seats
+    IS 'Seats';
+
+COMMENT ON COLUMN public.restaurant_table.parent_id
+    IS 'Parent Table';
+
+COMMENT ON COLUMN public.restaurant_table.create_uid
+    IS 'Created by';
+
+COMMENT ON COLUMN public.restaurant_table.write_uid
+    IS 'Last Updated by';
+
+COMMENT ON COLUMN public.restaurant_table.shape
+    IS 'Shape';
+
+COMMENT ON COLUMN public.restaurant_table.color
+    IS 'Color';
+
+COMMENT ON COLUMN public.restaurant_table.active
+    IS 'Active';
+
+COMMENT ON COLUMN public.restaurant_table.create_date
+    IS 'Created on';
+
+COMMENT ON COLUMN public.restaurant_table.write_date
+    IS 'Last Updated on';
+
+COMMENT ON COLUMN public.restaurant_table.position_h
+    IS 'Horizontal Position';
+
+COMMENT ON COLUMN public.restaurant_table.position_v
+    IS 'Vertical Position';
+
+COMMENT ON COLUMN public.restaurant_table.width
+    IS 'Width';
+
+COMMENT ON COLUMN public.restaurant_table.height
+    IS 'Height';
+
+COMMENT ON COLUMN public.restaurant_table.identifier
+    IS 'Security Token';
+-- Index: restaurant_table__floor_id_index
+
+-- DROP INDEX public.restaurant_table__floor_id_index;
+
+CREATE INDEX restaurant_table__floor_id_index
+    ON public.restaurant_table USING btree
+    (floor_id ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE floor_id IS NOT NULL;
