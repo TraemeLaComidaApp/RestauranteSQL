@@ -1,0 +1,110 @@
+-- Table: public.res_users
+
+-- DROP TABLE public.res_users;
+
+CREATE TABLE public.res_users
+(
+    id integer NOT NULL DEFAULT nextval('res_users_id_seq'::regclass),
+    company_id integer NOT NULL,
+    partner_id integer NOT NULL,
+    active boolean DEFAULT true,
+    create_date timestamp without time zone,
+    login character varying COLLATE pg_catalog."default" NOT NULL,
+    password character varying COLLATE pg_catalog."default",
+    action_id integer,
+    create_uid integer,
+    write_uid integer,
+    signature text COLLATE pg_catalog."default",
+    share boolean,
+    write_date timestamp without time zone,
+    totp_last_counter integer,
+    totp_secret character varying COLLATE pg_catalog."default",
+    tour_enabled boolean,
+    notification_type character varying COLLATE pg_catalog."default" NOT NULL,
+    manual_im_status character varying COLLATE pg_catalog."default",
+    out_of_office_message text COLLATE pg_catalog."default",
+    out_of_office_from timestamp without time zone,
+    out_of_office_to timestamp without time zone,
+    odoobot_state character varying COLLATE pg_catalog."default",
+    odoobot_failed boolean,
+    CONSTRAINT res_users_pkey PRIMARY KEY (id),
+    CONSTRAINT res_users_login_key UNIQUE (login),
+    CONSTRAINT res_users_company_id_fkey FOREIGN KEY (company_id)
+        REFERENCES public.res_company (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT res_users_create_uid_fkey FOREIGN KEY (create_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT res_users_partner_id_fkey FOREIGN KEY (partner_id)
+        REFERENCES public.res_partner (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT res_users_write_uid_fkey FOREIGN KEY (write_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT res_users_notification_type CHECK (notification_type::text = 'email'::text OR NOT share)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.res_users
+    OWNER to lidiaadmin;
+
+COMMENT ON COLUMN public.res_users.action_id
+    IS 'Home Action';
+
+COMMENT ON COLUMN public.res_users.create_uid
+    IS 'Created by';
+
+COMMENT ON COLUMN public.res_users.write_uid
+    IS 'Last Updated by';
+
+COMMENT ON COLUMN public.res_users.signature
+    IS 'Email Signature';
+
+COMMENT ON COLUMN public.res_users.share
+    IS 'Share User';
+
+COMMENT ON COLUMN public.res_users.write_date
+    IS 'Last Updated on';
+
+COMMENT ON COLUMN public.res_users.totp_last_counter
+    IS 'Totp Last Counter';
+
+COMMENT ON COLUMN public.res_users.tour_enabled
+    IS 'Onboarding';
+
+COMMENT ON COLUMN public.res_users.notification_type
+    IS 'Notification';
+
+COMMENT ON COLUMN public.res_users.manual_im_status
+    IS 'IM status manually set by the user';
+
+COMMENT ON COLUMN public.res_users.out_of_office_message
+    IS 'Vacation Responder';
+
+COMMENT ON COLUMN public.res_users.out_of_office_from
+    IS 'Out Of Office From';
+
+COMMENT ON COLUMN public.res_users.out_of_office_to
+    IS 'Out Of Office To';
+
+COMMENT ON COLUMN public.res_users.odoobot_state
+    IS 'OdooBot Status';
+
+COMMENT ON COLUMN public.res_users.odoobot_failed
+    IS 'Odoobot Failed';
+
+COMMENT ON CONSTRAINT res_users_notification_type ON public.res_users
+    IS 'CHECK (notification_type = ''email'' OR NOT share)';
+-- Index: res_users__partner_id_index
+
+-- DROP INDEX public.res_users__partner_id_index;
+
+CREATE INDEX res_users__partner_id_index
+    ON public.res_users USING btree
+    (partner_id ASC NULLS LAST)
+    TABLESPACE pg_default;
