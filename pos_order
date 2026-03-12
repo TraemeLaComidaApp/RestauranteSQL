@@ -1,0 +1,344 @@
+-- Table: public.pos_order
+
+-- DROP TABLE public.pos_order;
+
+CREATE TABLE public.pos_order
+(
+    id integer NOT NULL DEFAULT nextval('pos_order_id_seq'::regclass),
+    user_id integer,
+    company_id integer NOT NULL,
+    pricelist_id integer,
+    partner_id integer,
+    sequence_number integer,
+    session_id integer,
+    config_id integer,
+    account_move integer,
+    preset_id integer,
+    nb_print integer,
+    sale_journal integer,
+    fiscal_position_id integer,
+    create_uid integer,
+    write_uid integer,
+    access_token character varying COLLATE pg_catalog."default",
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    last_order_preparation_change character varying COLLATE pg_catalog."default",
+    state character varying COLLATE pg_catalog."default",
+    floating_order_name character varying COLLATE pg_catalog."default",
+    pos_reference character varying COLLATE pg_catalog."default",
+    ticket_code character varying COLLATE pg_catalog."default",
+    tracking_number character varying COLLATE pg_catalog."default",
+    uuid character varying COLLATE pg_catalog."default",
+    email character varying COLLATE pg_catalog."default",
+    mobile character varying COLLATE pg_catalog."default",
+    source character varying COLLATE pg_catalog."default",
+    shipping_date date,
+    general_customer_note text COLLATE pg_catalog."default",
+    internal_note text COLLATE pg_catalog."default",
+    amount_difference numeric,
+    amount_tax numeric NOT NULL,
+    amount_total numeric NOT NULL,
+    amount_paid numeric NOT NULL,
+    amount_return numeric NOT NULL,
+    currency_rate numeric,
+    tip_amount numeric,
+    is_refund boolean,
+    to_invoice boolean,
+    is_tipped boolean,
+    has_deleted_line boolean,
+    date_order timestamp without time zone,
+    preset_time timestamp without time zone,
+    create_date timestamp without time zone,
+    write_date timestamp without time zone,
+    next_online_payment_amount numeric,
+    table_id integer,
+    customer_count integer,
+    self_ordering_table_id integer,
+    table_stand_number character varying COLLATE pg_catalog."default",
+    use_self_order_online_payment boolean,
+    CONSTRAINT pos_order_pkey PRIMARY KEY (id),
+    CONSTRAINT pos_order_unique_uuid UNIQUE (uuid),
+    CONSTRAINT pos_order_account_move_fkey FOREIGN KEY (account_move)
+        REFERENCES public.account_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_company_id_fkey FOREIGN KEY (company_id)
+        REFERENCES public.res_company (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT pos_order_config_id_fkey FOREIGN KEY (config_id)
+        REFERENCES public.pos_config (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_create_uid_fkey FOREIGN KEY (create_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_fiscal_position_id_fkey FOREIGN KEY (fiscal_position_id)
+        REFERENCES public.account_fiscal_position (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_partner_id_fkey FOREIGN KEY (partner_id)
+        REFERENCES public.res_partner (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_preset_id_fkey FOREIGN KEY (preset_id)
+        REFERENCES public.pos_preset (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_pricelist_id_fkey FOREIGN KEY (pricelist_id)
+        REFERENCES public.product_pricelist (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_sale_journal_fkey FOREIGN KEY (sale_journal)
+        REFERENCES public.account_journal (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT pos_order_self_ordering_table_id_fkey FOREIGN KEY (self_ordering_table_id)
+        REFERENCES public.restaurant_table (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_session_id_fkey FOREIGN KEY (session_id)
+        REFERENCES public.pos_session (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_table_id_fkey FOREIGN KEY (table_id)
+        REFERENCES public.restaurant_table (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_write_uid_fkey FOREIGN KEY (write_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.pos_order
+    OWNER to lidiaadmin;
+
+COMMENT ON TABLE public.pos_order
+    IS 'Point of Sale Orders';
+
+COMMENT ON COLUMN public.pos_order.user_id
+    IS 'Employee';
+
+COMMENT ON COLUMN public.pos_order.company_id
+    IS 'Company';
+
+COMMENT ON COLUMN public.pos_order.pricelist_id
+    IS 'Pricelist';
+
+COMMENT ON COLUMN public.pos_order.partner_id
+    IS 'Customer';
+
+COMMENT ON COLUMN public.pos_order.sequence_number
+    IS 'Sequence Number';
+
+COMMENT ON COLUMN public.pos_order.session_id
+    IS 'Session';
+
+COMMENT ON COLUMN public.pos_order.config_id
+    IS 'Point of Sale';
+
+COMMENT ON COLUMN public.pos_order.account_move
+    IS 'Invoice';
+
+COMMENT ON COLUMN public.pos_order.preset_id
+    IS 'Preset';
+
+COMMENT ON COLUMN public.pos_order.nb_print
+    IS 'Number of Print';
+
+COMMENT ON COLUMN public.pos_order.sale_journal
+    IS 'Sales Journal';
+
+COMMENT ON COLUMN public.pos_order.fiscal_position_id
+    IS 'Fiscal Position';
+
+COMMENT ON COLUMN public.pos_order.create_uid
+    IS 'Created by';
+
+COMMENT ON COLUMN public.pos_order.write_uid
+    IS 'Last Updated by';
+
+COMMENT ON COLUMN public.pos_order.access_token
+    IS 'Security Token';
+
+COMMENT ON COLUMN public.pos_order.name
+    IS 'Order Ref';
+
+COMMENT ON COLUMN public.pos_order.last_order_preparation_change
+    IS 'Last preparation change';
+
+COMMENT ON COLUMN public.pos_order.state
+    IS 'Status';
+
+COMMENT ON COLUMN public.pos_order.floating_order_name
+    IS 'Order Name';
+
+COMMENT ON COLUMN public.pos_order.pos_reference
+    IS 'Receipt Number';
+
+COMMENT ON COLUMN public.pos_order.ticket_code
+    IS 'Ticket Code';
+
+COMMENT ON COLUMN public.pos_order.tracking_number
+    IS 'Order Number';
+
+COMMENT ON COLUMN public.pos_order.uuid
+    IS 'Uuid';
+
+COMMENT ON COLUMN public.pos_order.email
+    IS 'Email';
+
+COMMENT ON COLUMN public.pos_order.mobile
+    IS 'Mobile';
+
+COMMENT ON COLUMN public.pos_order.source
+    IS 'Origin';
+
+COMMENT ON COLUMN public.pos_order.shipping_date
+    IS 'Shipping Date';
+
+COMMENT ON COLUMN public.pos_order.general_customer_note
+    IS 'General Customer Note';
+
+COMMENT ON COLUMN public.pos_order.internal_note
+    IS 'Internal Note';
+
+COMMENT ON COLUMN public.pos_order.amount_difference
+    IS 'Difference';
+
+COMMENT ON COLUMN public.pos_order.amount_tax
+    IS 'Taxes';
+
+COMMENT ON COLUMN public.pos_order.amount_total
+    IS 'Total';
+
+COMMENT ON COLUMN public.pos_order.amount_paid
+    IS 'Paid';
+
+COMMENT ON COLUMN public.pos_order.amount_return
+    IS 'Returned';
+
+COMMENT ON COLUMN public.pos_order.currency_rate
+    IS 'Currency Rate';
+
+COMMENT ON COLUMN public.pos_order.tip_amount
+    IS 'Tip Amount';
+
+COMMENT ON COLUMN public.pos_order.is_refund
+    IS 'Is Refund';
+
+COMMENT ON COLUMN public.pos_order.to_invoice
+    IS 'To invoice';
+
+COMMENT ON COLUMN public.pos_order.is_tipped
+    IS 'Is this already tipped?';
+
+COMMENT ON COLUMN public.pos_order.has_deleted_line
+    IS 'Has Deleted Line';
+
+COMMENT ON COLUMN public.pos_order.date_order
+    IS 'Date';
+
+COMMENT ON COLUMN public.pos_order.preset_time
+    IS 'Hour';
+
+COMMENT ON COLUMN public.pos_order.create_date
+    IS 'Created on';
+
+COMMENT ON COLUMN public.pos_order.write_date
+    IS 'Last Updated on';
+
+COMMENT ON COLUMN public.pos_order.next_online_payment_amount
+    IS 'Next online payment amount to pay';
+
+COMMENT ON COLUMN public.pos_order.table_id
+    IS 'Table';
+
+COMMENT ON COLUMN public.pos_order.customer_count
+    IS 'Guests';
+
+COMMENT ON COLUMN public.pos_order.self_ordering_table_id
+    IS 'Table reference';
+
+COMMENT ON COLUMN public.pos_order.table_stand_number
+    IS 'Table Stand Number';
+
+COMMENT ON COLUMN public.pos_order.use_self_order_online_payment
+    IS 'Use Self Order Online Payment';
+
+COMMENT ON CONSTRAINT pos_order_unique_uuid ON public.pos_order
+    IS 'unique (uuid)';
+-- Index: pos_order__account_move_index
+
+-- DROP INDEX public.pos_order__account_move_index;
+
+CREATE INDEX pos_order__account_move_index
+    ON public.pos_order USING btree
+    (account_move ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE account_move IS NOT NULL;
+-- Index: pos_order__company_id_index
+
+-- DROP INDEX public.pos_order__company_id_index;
+
+CREATE INDEX pos_order__company_id_index
+    ON public.pos_order USING btree
+    (company_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: pos_order__date_order_index
+
+-- DROP INDEX public.pos_order__date_order_index;
+
+CREATE INDEX pos_order__date_order_index
+    ON public.pos_order USING btree
+    (date_order ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: pos_order__partner_id_index
+
+-- DROP INDEX public.pos_order__partner_id_index;
+
+CREATE INDEX pos_order__partner_id_index
+    ON public.pos_order USING btree
+    (partner_id ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE partner_id IS NOT NULL;
+-- Index: pos_order__pos_reference_index
+
+-- DROP INDEX public.pos_order__pos_reference_index;
+
+CREATE INDEX pos_order__pos_reference_index
+    ON public.pos_order USING btree
+    (pos_reference COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: pos_order__session_id_index
+
+-- DROP INDEX public.pos_order__session_id_index;
+
+CREATE INDEX pos_order__session_id_index
+    ON public.pos_order USING btree
+    (session_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: pos_order__state_index
+
+-- DROP INDEX public.pos_order__state_index;
+
+CREATE INDEX pos_order__state_index
+    ON public.pos_order USING btree
+    (state COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: pos_order__table_id_index
+
+-- DROP INDEX public.pos_order__table_id_index;
+
+CREATE INDEX pos_order__table_id_index
+    ON public.pos_order USING btree
+    (table_id ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE table_id IS NOT NULL;
