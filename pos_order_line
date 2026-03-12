@@ -1,0 +1,212 @@
+-- Table: public.pos_order_line
+
+-- DROP TABLE public.pos_order_line;
+
+CREATE TABLE public.pos_order_line
+(
+    id integer NOT NULL DEFAULT nextval('pos_order_line_id_seq'::regclass),
+    company_id integer,
+    product_id integer NOT NULL,
+    order_id integer NOT NULL,
+    refunded_orderline_id integer,
+    combo_parent_id integer,
+    combo_item_id integer,
+    create_uid integer,
+    write_uid integer,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    notice character varying COLLATE pg_catalog."default",
+    price_type character varying COLLATE pg_catalog."default",
+    full_product_name character varying COLLATE pg_catalog."default",
+    customer_note character varying COLLATE pg_catalog."default",
+    uuid character varying COLLATE pg_catalog."default",
+    note character varying COLLATE pg_catalog."default",
+    extra_tax_data jsonb,
+    price_unit numeric,
+    qty numeric,
+    price_subtotal numeric NOT NULL,
+    price_subtotal_incl numeric NOT NULL,
+    total_cost numeric,
+    discount numeric,
+    is_total_cost_computed boolean,
+    is_edited boolean,
+    create_date timestamp without time zone,
+    write_date timestamp without time zone,
+    price_extra double precision,
+    course_id integer,
+    combo_id integer,
+    CONSTRAINT pos_order_line_pkey PRIMARY KEY (id),
+    CONSTRAINT pos_order_line_unique_uuid UNIQUE (uuid),
+    CONSTRAINT pos_order_line_combo_id_fkey FOREIGN KEY (combo_id)
+        REFERENCES public.product_combo (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_combo_item_id_fkey FOREIGN KEY (combo_item_id)
+        REFERENCES public.product_combo_item (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_combo_parent_id_fkey FOREIGN KEY (combo_parent_id)
+        REFERENCES public.pos_order_line (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_company_id_fkey FOREIGN KEY (company_id)
+        REFERENCES public.res_company (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_course_id_fkey FOREIGN KEY (course_id)
+        REFERENCES public.restaurant_order_course (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_create_uid_fkey FOREIGN KEY (create_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_order_id_fkey FOREIGN KEY (order_id)
+        REFERENCES public.pos_order (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT pos_order_line_product_id_fkey FOREIGN KEY (product_id)
+        REFERENCES public.product_product (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT pos_order_line_refunded_orderline_id_fkey FOREIGN KEY (refunded_orderline_id)
+        REFERENCES public.pos_order_line (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL,
+    CONSTRAINT pos_order_line_write_uid_fkey FOREIGN KEY (write_uid)
+        REFERENCES public.res_users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.pos_order_line
+    OWNER to lidiaadmin;
+
+COMMENT ON TABLE public.pos_order_line
+    IS 'Point of Sale Order Lines';
+
+COMMENT ON COLUMN public.pos_order_line.company_id
+    IS 'Company';
+
+COMMENT ON COLUMN public.pos_order_line.product_id
+    IS 'Product';
+
+COMMENT ON COLUMN public.pos_order_line.order_id
+    IS 'Order Ref';
+
+COMMENT ON COLUMN public.pos_order_line.refunded_orderline_id
+    IS 'Refunded Order Line';
+
+COMMENT ON COLUMN public.pos_order_line.combo_parent_id
+    IS 'Combo Parent';
+
+COMMENT ON COLUMN public.pos_order_line.combo_item_id
+    IS 'Combo Item';
+
+COMMENT ON COLUMN public.pos_order_line.create_uid
+    IS 'Created by';
+
+COMMENT ON COLUMN public.pos_order_line.write_uid
+    IS 'Last Updated by';
+
+COMMENT ON COLUMN public.pos_order_line.name
+    IS 'Line No';
+
+COMMENT ON COLUMN public.pos_order_line.notice
+    IS 'Discount Notice';
+
+COMMENT ON COLUMN public.pos_order_line.price_type
+    IS 'Price Type';
+
+COMMENT ON COLUMN public.pos_order_line.full_product_name
+    IS 'Full Product Name';
+
+COMMENT ON COLUMN public.pos_order_line.customer_note
+    IS 'Customer Note';
+
+COMMENT ON COLUMN public.pos_order_line.uuid
+    IS 'Uuid';
+
+COMMENT ON COLUMN public.pos_order_line.note
+    IS 'Product Note';
+
+COMMENT ON COLUMN public.pos_order_line.extra_tax_data
+    IS 'Extra Tax Data';
+
+COMMENT ON COLUMN public.pos_order_line.price_unit
+    IS 'Unit Price';
+
+COMMENT ON COLUMN public.pos_order_line.qty
+    IS 'Quantity';
+
+COMMENT ON COLUMN public.pos_order_line.price_subtotal
+    IS 'Tax Excl.';
+
+COMMENT ON COLUMN public.pos_order_line.price_subtotal_incl
+    IS 'Tax Incl.';
+
+COMMENT ON COLUMN public.pos_order_line.total_cost
+    IS 'Total cost';
+
+COMMENT ON COLUMN public.pos_order_line.discount
+    IS 'Discount (%)';
+
+COMMENT ON COLUMN public.pos_order_line.is_total_cost_computed
+    IS 'Is Total Cost Computed';
+
+COMMENT ON COLUMN public.pos_order_line.is_edited
+    IS 'Edited';
+
+COMMENT ON COLUMN public.pos_order_line.create_date
+    IS 'Created on';
+
+COMMENT ON COLUMN public.pos_order_line.write_date
+    IS 'Last Updated on';
+
+COMMENT ON COLUMN public.pos_order_line.price_extra
+    IS 'Price extra';
+
+COMMENT ON COLUMN public.pos_order_line.course_id
+    IS 'Course Ref';
+
+COMMENT ON COLUMN public.pos_order_line.combo_id
+    IS 'Combo reference';
+
+COMMENT ON CONSTRAINT pos_order_line_unique_uuid ON public.pos_order_line
+    IS 'unique (uuid)';
+-- Index: pos_order_line__combo_parent_id_index
+
+-- DROP INDEX public.pos_order_line__combo_parent_id_index;
+
+CREATE INDEX pos_order_line__combo_parent_id_index
+    ON public.pos_order_line USING btree
+    (combo_parent_id ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE combo_parent_id IS NOT NULL;
+-- Index: pos_order_line__course_id_index
+
+-- DROP INDEX public.pos_order_line__course_id_index;
+
+CREATE INDEX pos_order_line__course_id_index
+    ON public.pos_order_line USING btree
+    (course_id ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE course_id IS NOT NULL;
+-- Index: pos_order_line__order_id_index
+
+-- DROP INDEX public.pos_order_line__order_id_index;
+
+CREATE INDEX pos_order_line__order_id_index
+    ON public.pos_order_line USING btree
+    (order_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: pos_order_line__refunded_orderline_id_index
+
+-- DROP INDEX public.pos_order_line__refunded_orderline_id_index;
+
+CREATE INDEX pos_order_line__refunded_orderline_id_index
+    ON public.pos_order_line USING btree
+    (refunded_orderline_id ASC NULLS LAST)
+    TABLESPACE pg_default
+    WHERE refunded_orderline_id IS NOT NULL;
